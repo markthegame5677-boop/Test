@@ -1,6 +1,6 @@
 local allowedUsers = {
     -- Permanent access
-    [] = "permanent",
+    [4321575771] = "permanent",
 
     -- Temporary access
     [987654321] = os.time({
