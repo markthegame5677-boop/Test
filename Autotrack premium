@@ -7,10 +7,10 @@ local allowedUsers = {
     [10512592607] = "permanent",
 
     -- Timed user
-    [123456789] = os.time({
+    [2265994184] = os.time({
         year = 2026,
-        month = 6,
-        day = 1,
+        month = 7,
+        day = 15,
         hour = 0
     }),
 }
