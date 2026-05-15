@@ -1,3 +1,5 @@
+local securityEnabled = true -- true = whitelist ON, false = whitelist OFF
+
 local allowedUsers = {
     -- Permanent access
     [8081233261] = "permanent",
@@ -13,6 +15,11 @@ local allowedUsers = {
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
+
+-- Skip whitelist if security is disabled
+if not securityEnabled then
+    return loadstring(game:HttpGet("https://encrypt-x.pages.dev/Scripts?Id=5604342624040"))("5604342624040")
+end
 
 local access = allowedUsers[player.UserId]
 
