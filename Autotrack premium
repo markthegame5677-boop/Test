@@ -1,1 +1,40 @@
+local securityEnabled = true -- true = whitelist ON, false = whitelist OFF
 
+local allowedUsers = {
+    -- Permanent user
+    [8081233261] = "permanent",
+
+    -- Timed user
+    [123456789] = os.time({
+        year = 2026,
+        month = 6,
+        day = 1,
+        hour = 0
+    }),
+}
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- If security is disabled, skip all checks
+if not securityEnabled then
+    return loadstring(game:HttpGet("https://encrypt-x.pages.dev/Scripts?Id=Autotrackp"))("Autotrackp")
+end
+
+local access = allowedUsers[player.UserId]
+
+if not access then
+    return warn("You are not whitelisted.")
+end
+
+-- Permanent access
+if access == "permanent" then
+    return loadstring(game:HttpGet("https://encrypt-x.pages.dev/Scripts?Id=Autotrackp"))("Autotrackp")
+end
+
+-- Timed access
+if os.time() > access then
+    return warn("Your access has expired.")
+end
+
+loadstring(game:HttpGet("https://encrypt-x.pages.dev/Scripts?Id=Autotrackp"))("Autotrackp")
