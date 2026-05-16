@@ -6,6 +6,8 @@ local allowedUsers = {
 
     [10512592607] = "permanent",
 
+    [3034951075] = "permanent",
+
     [2235731985] = "permanent",
 
     -- Timed user
