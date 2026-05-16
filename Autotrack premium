@@ -6,6 +6,8 @@ local allowedUsers = {
 
     [10512592607] = "permanent",
 
+    [2235731985] = "permanent",
+
     -- Timed user
     [8106244956] = os.time({
         year = 2026,
