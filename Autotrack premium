@@ -1,28 +1,25 @@
 local securityEnabled = true -- true = whitelist ON, false = whitelist OFF
 
 local allowedUsers = {
-    -- Permanent user
+    -- Permanent users
     [8081233261] = "permanent",
-
     [10512592607] = "permanent",
-
     [3034951075] = "permanent",
-
     [2235731985] = "permanent",
 
-    -- Timed user
+    -- Timed users
     [8106244956] = os.time({
         year = 2026,
         month = 7,
         day = 15,
         hour = 0
-    
+    }),
+
     [8359989457] = os.time({
         year = 2026,
         month = 7,
-        day = 17
+        day = 17,
         hour = 0
-
     }),
 }
 
