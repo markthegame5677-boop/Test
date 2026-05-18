@@ -3,7 +3,7 @@ local securityEnabled = true -- true = whitelist ON, false = whitelist OFF
 local allowedUsers = {
     -- Permanent access
     [8081233261] = "permanent",
-    [10512592607] = "permanent",
+    [3189967384] = "permanent",
     [8789603217] = "permanent",
     [2235731985] = "permanent",
     [3673634114] = "permanent",
