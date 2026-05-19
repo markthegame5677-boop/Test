@@ -1,6 +1,4 @@
--- Leo's Hub - Auto Wallhop (LocalScript)
--- Place inside StarterPlayerScripts
-
+-- Services
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 
@@ -10,119 +8,137 @@ local guiLocked = false
 local minimized = false
 local settingsOpen = false
 local flickEnabled = false
-
 local debounce = false
 local WALL_DISTANCE = 1
 local FLICK_ANGLE = 35
-
 local controlMode = "jump"
 local jumpOnFlick = false
 local infJump = false
+local pcMode = false
+local flickKey = Enum.KeyCode.F
+local listeningForKey = nil
 
--- GUI
 local screenGui = Instance.new("ScreenGui")
+local frame = Instance.new("Frame")
+local frameCorner = Instance.new("UICorner")
+local stroke = Instance.new("UIStroke")
+local dragBar = Instance.new("Frame")
+local dragBarCorner = Instance.new("UICorner")
+local dragLabel = Instance.new("TextLabel")
+local settingsBtn = Instance.new("ImageButton")
+local minButton = Instance.new("ImageButton")
+local pinButton = Instance.new("ImageButton")
+local closeButton = Instance.new("ImageButton")
+local contentFrame = Instance.new("Frame")
+local toggleBtn = Instance.new("TextButton")
+local toggleBtnCorner = Instance.new("UICorner")
+local statusLabel = Instance.new("TextLabel")
+local flickBtnUI = Instance.new("TextButton")
+local flickBtnUICorner = Instance.new("UICorner")
+local settingsFrame = Instance.new("Frame")
+local scrollFrame = Instance.new("ScrollingFrame")
+local controlModeLabel = Instance.new("TextLabel")
+local jumpModeBtn = Instance.new("TextButton")
+local jumpModeBtnCorner = Instance.new("UICorner")
+local jumpModeIcon = Instance.new("ImageLabel")
+local flickModeBtn = Instance.new("TextButton")
+local flickModeBtnCorner = Instance.new("UICorner")
+local flickModeIcon = Instance.new("ImageLabel")
+local extraOptionsLabel = Instance.new("TextLabel")
+local jumpOnFlickBtn = Instance.new("TextButton")
+local jumpOnFlickBtnCorner = Instance.new("UICorner")
+local jumpOnFlickIcon = Instance.new("ImageLabel")
+local infJumpBtn = Instance.new("TextButton")
+local infJumpBtnCorner = Instance.new("UICorner")
+local infJumpIcon = Instance.new("ImageLabel")
+local riskyLabel = Instance.new("TextLabel")
+local riskyLabelCorner = Instance.new("UICorner")
+local riskyIcon = Instance.new("ImageLabel")
+
 screenGui.Name = "LeosHubWallhop"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = player:WaitForChild("PlayerGui")
 
-local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 320, 0, 145)
 frame.Position = UDim2.new(0, 20, 0.5, -72)
 frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 frame.BorderSizePixel = 0
 frame.Active = true
 frame.Parent = screenGui
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
 
-local stroke = Instance.new("UIStroke")
+frameCorner.CornerRadius = UDim.new(0, 10)
+frameCorner.Parent = frame
+
 stroke.Color = Color3.fromRGB(80, 80, 100)
 stroke.Thickness = 1.5
 stroke.Parent = frame
 
--- Drag Bar
-local dragBar = Instance.new("Frame")
 dragBar.Size = UDim2.new(1, 0, 0, 40)
 dragBar.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 dragBar.BorderSizePixel = 0
 dragBar.Active = true
 dragBar.Parent = frame
-Instance.new("UICorner", dragBar).CornerRadius = UDim.new(0, 10)
 
-local dragLabel = Instance.new("TextLabel")
+dragBarCorner.CornerRadius = UDim.new(0, 10)
+dragBarCorner.Parent = dragBar
+
 dragLabel.Size = UDim2.new(1, -145, 1, 0)
 dragLabel.Position = UDim2.new(0, 12, 0, 0)
 dragLabel.BackgroundTransparency = 1
-dragLabel.Text = "⠿ Leo's Hub"
+dragLabel.Text = "Leo's Hub"
 dragLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
 dragLabel.Font = Enum.Font.GothamBold
 dragLabel.TextSize = 17
 dragLabel.TextXAlignment = Enum.TextXAlignment.Left
 dragLabel.Parent = dragBar
 
-local settingsBtn = Instance.new("TextButton")
-settingsBtn.Size = UDim2.new(0, 34, 0, 34)
-settingsBtn.Position = UDim2.new(1, -142, 0, 3)
+settingsBtn.Size = UDim2.new(0, 24, 0, 24)
+settingsBtn.Position = UDim2.new(1, -137, 0, 8)
 settingsBtn.BackgroundTransparency = 1
-settingsBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-settingsBtn.Text = "⚙"
-settingsBtn.TextSize = 22
-settingsBtn.Font = Enum.Font.GothamBold
+settingsBtn.Image = "rbxassetid://80758916183665"
 settingsBtn.BorderSizePixel = 0
 settingsBtn.Parent = dragBar
 
-local minButton = Instance.new("TextButton")
-minButton.Size = UDim2.new(0, 34, 0, 34)
-minButton.Position = UDim2.new(1, -105, 0, 3)
+minButton.Size = UDim2.new(0, 24, 0, 24)
+minButton.Position = UDim2.new(1, -100, 0, 8)
 minButton.BackgroundTransparency = 1
-minButton.TextColor3 = Color3.fromRGB(200, 200, 200)
-minButton.Text = "－"
-minButton.TextSize = 20
-minButton.Font = Enum.Font.GothamBold
+minButton.Image = "rbxassetid://116269596042539"
 minButton.BorderSizePixel = 0
 minButton.Parent = dragBar
 
-local pinButton = Instance.new("TextButton")
-pinButton.Size = UDim2.new(0, 34, 0, 34)
-pinButton.Position = UDim2.new(1, -70, 0, 3)
+pinButton.Size = UDim2.new(0, 24, 0, 24)
+pinButton.Position = UDim2.new(1, -65, 0, 8)
 pinButton.BackgroundTransparency = 1
-pinButton.TextColor3 = Color3.fromRGB(200, 200, 200)
-pinButton.Text = "📌"
-pinButton.TextSize = 20
-pinButton.Font = Enum.Font.GothamBold
+pinButton.Image = "rbxassetid://120978111007514"
 pinButton.BorderSizePixel = 0
 pinButton.Parent = dragBar
 
-local closeButton = Instance.new("TextButton")
-closeButton.Size = UDim2.new(0, 34, 0, 34)
-closeButton.Position = UDim2.new(1, -38, 0, 3)
+closeButton.Size = UDim2.new(0, 24, 0, 24)
+closeButton.Position = UDim2.new(1, -33, 0, 8)
 closeButton.BackgroundTransparency = 1
-closeButton.TextColor3 = Color3.fromRGB(255, 80, 80)
-closeButton.Text = "✕"
-closeButton.TextSize = 20
-closeButton.Font = Enum.Font.GothamBold
+closeButton.Image = "rbxassetid://110786993356448"
+closeButton.ImageColor3 = Color3.fromRGB(255, 80, 80)
 closeButton.BorderSizePixel = 0
 closeButton.Parent = dragBar
 
--- Main Content
-local contentFrame = Instance.new("Frame")
 contentFrame.Size = UDim2.new(1, 0, 1, -40)
 contentFrame.Position = UDim2.new(0, 0, 0, 40)
 contentFrame.BackgroundTransparency = 1
 contentFrame.Parent = frame
 
-local toggleBtn = Instance.new("TextButton")
 toggleBtn.Size = UDim2.new(0, 290, 0, 48)
 toggleBtn.Position = UDim2.new(0, 15, 0, 10)
 toggleBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
 toggleBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
-toggleBtn.Text = "● AUTO WALLHOP: OFF"
+toggleBtn.Text = "AUTO WALLHOP: OFF"
 toggleBtn.Font = Enum.Font.GothamBold
 toggleBtn.TextSize = 16
 toggleBtn.BorderSizePixel = 0
 toggleBtn.Parent = contentFrame
-Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(0, 8)
 
-local statusLabel = Instance.new("TextLabel")
+toggleBtnCorner.CornerRadius = UDim.new(0, 8)
+toggleBtnCorner.Parent = toggleBtn
+
 statusLabel.Size = UDim2.new(0, 290, 0, 30)
 statusLabel.Position = UDim2.new(0, 15, 0, 66)
 statusLabel.BackgroundTransparency = 1
@@ -132,129 +148,289 @@ statusLabel.TextSize = 14
 statusLabel.Font = Enum.Font.Gotham
 statusLabel.Parent = contentFrame
 
--- Flick Button (button mode only)
-local flickBtnUI = Instance.new("TextButton")
 flickBtnUI.Size = UDim2.new(0, 290, 0, 48)
 flickBtnUI.Position = UDim2.new(0, 15, 0, 10)
 flickBtnUI.BackgroundColor3 = Color3.fromRGB(60, 60, 180)
 flickBtnUI.TextColor3 = Color3.fromRGB(255, 255, 255)
-flickBtnUI.Text = "👆 FLICK"
+flickBtnUI.Text = "FLICK"
 flickBtnUI.Font = Enum.Font.GothamBold
 flickBtnUI.TextSize = 18
 flickBtnUI.BorderSizePixel = 0
 flickBtnUI.Visible = false
 flickBtnUI.Parent = contentFrame
-Instance.new("UICorner", flickBtnUI).CornerRadius = UDim.new(0, 8)
 
--- Settings Panel
-local settingsFrame = Instance.new("Frame")
+flickBtnUICorner.CornerRadius = UDim.new(0, 8)
+flickBtnUICorner.Parent = flickBtnUI
+
 settingsFrame.Size = UDim2.new(1, 0, 1, -40)
 settingsFrame.Position = UDim2.new(0, 0, 0, 40)
 settingsFrame.BackgroundTransparency = 1
 settingsFrame.Visible = false
 settingsFrame.Parent = frame
 
-local scrollFrame = Instance.new("ScrollingFrame")
 scrollFrame.Size = UDim2.new(1, 0, 1, 0)
 scrollFrame.BackgroundTransparency = 1
 scrollFrame.BorderSizePixel = 0
 scrollFrame.ScrollBarThickness = 4
 scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
-scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 460)
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 560)
 scrollFrame.Parent = settingsFrame
 
-local function makeLabel(text, posY)
-    local lbl = Instance.new("TextLabel")
-    lbl.Size = UDim2.new(0, 290, 0, 20)
-    lbl.Position = UDim2.new(0, 15, 0, posY)
-    lbl.BackgroundTransparency = 1
-    lbl.TextColor3 = Color3.fromRGB(140, 140, 160)
-    lbl.Font = Enum.Font.Gotham
-    lbl.TextSize = 13
-    lbl.TextXAlignment = Enum.TextXAlignment.Left
-    lbl.Text = text
-    lbl.Parent = scrollFrame
-    return lbl
-end
+controlModeLabel.Size = UDim2.new(0, 290, 0, 20)
+controlModeLabel.Position = UDim2.new(0, 15, 0, 8)
+controlModeLabel.BackgroundTransparency = 1
+controlModeLabel.TextColor3 = Color3.fromRGB(140, 140, 160)
+controlModeLabel.Font = Enum.Font.Gotham
+controlModeLabel.TextSize = 13
+controlModeLabel.TextXAlignment = Enum.TextXAlignment.Left
+controlModeLabel.Text = "── Control Mode ──"
+controlModeLabel.Parent = scrollFrame
 
-local function makeToggleBtn(text, posY, defaultOn, onToggle)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, 290, 0, 40)
-    btn.Position = UDim2.new(0, 15, 0, posY)
-    btn.BorderSizePixel = 0
-    btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 15
-    btn.Parent = scrollFrame
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
-
-    local state = defaultOn
-
-    local function update()
-        if state then
-            btn.Text = "✅ " .. text .. ": ON"
-            btn.BackgroundColor3 = Color3.fromRGB(30, 100, 60)
-            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        else
-            btn.Text = "⬜ " .. text .. ": OFF"
-            btn.BackgroundColor3 = Color3.fromRGB(60, 40, 40)
-            btn.TextColor3 = Color3.fromRGB(180, 180, 180)
-        end
-        onToggle(state)
-    end
-    update()
-
-    btn.MouseButton1Click:Connect(function()
-        state = not state
-        update()
-    end)
-
-    return btn
-end
-
--- Control Mode Section
-makeLabel("── Control Mode ──", 8)
-
-local jumpModeBtn = Instance.new("TextButton")
 jumpModeBtn.Size = UDim2.new(0, 290, 0, 40)
 jumpModeBtn.Position = UDim2.new(0, 15, 0, 32)
 jumpModeBtn.BorderSizePixel = 0
 jumpModeBtn.Font = Enum.Font.GothamBold
 jumpModeBtn.TextSize = 15
 jumpModeBtn.Parent = scrollFrame
-Instance.new("UICorner", jumpModeBtn).CornerRadius = UDim.new(0, 8)
 
-local flickModeBtn = Instance.new("TextButton")
+jumpModeBtnCorner.CornerRadius = UDim.new(0, 8)
+jumpModeBtnCorner.Parent = jumpModeBtn
+
+jumpModeIcon.Size = UDim2.new(0, 20, 0, 20)
+jumpModeIcon.Position = UDim2.new(0, 10, 0.5, -10)
+jumpModeIcon.BackgroundTransparency = 1
+jumpModeIcon.Image = "rbxassetid://93898873302694"
+jumpModeIcon.Parent = jumpModeBtn
+
 flickModeBtn.Size = UDim2.new(0, 290, 0, 40)
 flickModeBtn.Position = UDim2.new(0, 15, 0, 80)
 flickModeBtn.BorderSizePixel = 0
 flickModeBtn.Font = Enum.Font.GothamBold
 flickModeBtn.TextSize = 15
 flickModeBtn.Parent = scrollFrame
-Instance.new("UICorner", flickModeBtn).CornerRadius = UDim.new(0, 8)
+
+flickModeBtnCorner.CornerRadius = UDim.new(0, 8)
+flickModeBtnCorner.Parent = flickModeBtn
+
+flickModeIcon.Size = UDim2.new(0, 20, 0, 20)
+flickModeIcon.Position = UDim2.new(0, 10, 0.5, -10)
+flickModeIcon.BackgroundTransparency = 1
+flickModeIcon.Image = "rbxassetid://93898873302694"
+flickModeIcon.Parent = flickModeBtn
+
+extraOptionsLabel.Size = UDim2.new(0, 290, 0, 20)
+extraOptionsLabel.Position = UDim2.new(0, 15, 0, 132)
+extraOptionsLabel.BackgroundTransparency = 1
+extraOptionsLabel.TextColor3 = Color3.fromRGB(140, 140, 160)
+extraOptionsLabel.Font = Enum.Font.Gotham
+extraOptionsLabel.TextSize = 13
+extraOptionsLabel.TextXAlignment = Enum.TextXAlignment.Left
+extraOptionsLabel.Text = "── Extra Options ──"
+extraOptionsLabel.Parent = scrollFrame
+
+jumpOnFlickBtn.Size = UDim2.new(0, 290, 0, 40)
+jumpOnFlickBtn.Position = UDim2.new(0, 15, 0, 156)
+jumpOnFlickBtn.BorderSizePixel = 0
+jumpOnFlickBtn.Font = Enum.Font.GothamBold
+jumpOnFlickBtn.TextSize = 15
+jumpOnFlickBtn.BackgroundColor3 = Color3.fromRGB(60, 40, 40)
+jumpOnFlickBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
+jumpOnFlickBtn.Text = "      Jump On Flick: OFF"
+jumpOnFlickBtn.Parent = scrollFrame
+
+jumpOnFlickBtnCorner.CornerRadius = UDim.new(0, 8)
+jumpOnFlickBtnCorner.Parent = jumpOnFlickBtn
+
+jumpOnFlickIcon.Size = UDim2.new(0, 20, 0, 20)
+jumpOnFlickIcon.Position = UDim2.new(0, 10, 0.5, -10)
+jumpOnFlickIcon.BackgroundTransparency = 1
+jumpOnFlickIcon.Image = "rbxassetid://93898873302694"
+jumpOnFlickIcon.Visible = false
+jumpOnFlickIcon.Parent = jumpOnFlickBtn
+
+infJumpBtn.Size = UDim2.new(0, 210, 0, 40)
+infJumpBtn.Position = UDim2.new(0, 15, 0, 204)
+infJumpBtn.BorderSizePixel = 0
+infJumpBtn.Font = Enum.Font.GothamBold
+infJumpBtn.TextSize = 15
+infJumpBtn.Parent = scrollFrame
+
+infJumpBtnCorner.CornerRadius = UDim.new(0, 8)
+infJumpBtnCorner.Parent = infJumpBtn
+
+infJumpIcon.Size = UDim2.new(0, 20, 0, 20)
+infJumpIcon.Position = UDim2.new(0, 10, 0.5, -10)
+infJumpIcon.BackgroundTransparency = 1
+infJumpIcon.Image = "rbxassetid://93898873302694"
+infJumpIcon.Parent = infJumpBtn
+
+riskyLabel.Size = UDim2.new(0, 68, 0, 40)
+riskyLabel.Position = UDim2.new(0, 232, 0, 204)
+riskyLabel.BackgroundColor3 = Color3.fromRGB(140, 40, 40)
+riskyLabel.TextColor3 = Color3.fromRGB(255, 200, 50)
+riskyLabel.Text = "      risky"
+riskyLabel.Font = Enum.Font.GothamBold
+riskyLabel.TextSize = 12
+riskyLabel.BorderSizePixel = 0
+riskyLabel.Parent = scrollFrame
+
+riskyLabelCorner.CornerRadius = UDim.new(0, 8)
+riskyLabelCorner.Parent = riskyLabel
+
+riskyIcon.Size = UDim2.new(0, 16, 0, 16)
+riskyIcon.Position = UDim2.new(0, 6, 0.5, -8)
+riskyIcon.BackgroundTransparency = 1
+riskyIcon.Image = "rbxassetid://113170163475623"
+riskyIcon.Parent = riskyLabel
+
+-- PC Mode Section
+local pcModeLabel = Instance.new("TextLabel")
+pcModeLabel.Size = UDim2.new(0, 290, 0, 20)
+pcModeLabel.Position = UDim2.new(0, 15, 0, 260)
+pcModeLabel.BackgroundTransparency = 1
+pcModeLabel.TextColor3 = Color3.fromRGB(140, 140, 160)
+pcModeLabel.Font = Enum.Font.Gotham
+pcModeLabel.TextSize = 13
+pcModeLabel.TextXAlignment = Enum.TextXAlignment.Left
+pcModeLabel.Text = "── PC Mode ──"
+pcModeLabel.Parent = scrollFrame
+
+local pcModeBtn = Instance.new("TextButton")
+pcModeBtn.Size = UDim2.new(0, 290, 0, 40)
+pcModeBtn.Position = UDim2.new(0, 15, 0, 284)
+pcModeBtn.BackgroundColor3 = Color3.fromRGB(60, 40, 40)
+pcModeBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
+pcModeBtn.Text = "      PC Mode: OFF"
+pcModeBtn.Font = Enum.Font.GothamBold
+pcModeBtn.TextSize = 15
+pcModeBtn.BorderSizePixel = 0
+pcModeBtn.Parent = scrollFrame
+Instance.new("UICorner", pcModeBtn).CornerRadius = UDim.new(0, 8)
+
+local pcModeIcon = Instance.new("ImageLabel")
+pcModeIcon.Size = UDim2.new(0, 20, 0, 20)
+pcModeIcon.Position = UDim2.new(0, 10, 0.5, -10)
+pcModeIcon.BackgroundTransparency = 1
+pcModeIcon.Image = "rbxassetid://93898873302694"
+pcModeIcon.Visible = false
+pcModeIcon.Parent = pcModeBtn
+
+local keybindFrame = Instance.new("Frame")
+keybindFrame.Size = UDim2.new(0, 290, 0, 80)
+keybindFrame.Position = UDim2.new(0, 15, 0, 332)
+keybindFrame.BackgroundTransparency = 1
+keybindFrame.Visible = false
+keybindFrame.Parent = scrollFrame
+
+local keybindSectionLabel = Instance.new("TextLabel")
+keybindSectionLabel.Size = UDim2.new(1, 0, 0, 20)
+keybindSectionLabel.BackgroundTransparency = 1
+keybindSectionLabel.TextColor3 = Color3.fromRGB(140, 140, 160)
+keybindSectionLabel.Font = Enum.Font.Gotham
+keybindSectionLabel.TextSize = 13
+keybindSectionLabel.TextXAlignment = Enum.TextXAlignment.Left
+keybindSectionLabel.Text = "── Keybind ──"
+keybindSectionLabel.Parent = keybindFrame
+
+local flickKeyRow = Instance.new("Frame")
+flickKeyRow.Size = UDim2.new(1, 0, 0, 44)
+flickKeyRow.Position = UDim2.new(0, 0, 0, 28)
+flickKeyRow.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+flickKeyRow.BorderSizePixel = 0
+flickKeyRow.Parent = keybindFrame
+Instance.new("UICorner", flickKeyRow).CornerRadius = UDim.new(0, 8)
+
+local flickKeyLbl = Instance.new("TextLabel")
+flickKeyLbl.Size = UDim2.new(0.55, 0, 1, 0)
+flickKeyLbl.Position = UDim2.new(0, 12, 0, 0)
+flickKeyLbl.BackgroundTransparency = 1
+flickKeyLbl.Text = "Flick Key"
+flickKeyLbl.TextColor3 = Color3.fromRGB(200, 200, 210)
+flickKeyLbl.Font = Enum.Font.GothamBold
+flickKeyLbl.TextSize = 13
+flickKeyLbl.TextXAlignment = Enum.TextXAlignment.Left
+flickKeyLbl.Parent = flickKeyRow
+
+local flickKeyBtn = Instance.new("TextButton")
+flickKeyBtn.Size = UDim2.new(0.38, 0, 0, 28)
+flickKeyBtn.Position = UDim2.new(0.58, 0, 0.5, -14)
+flickKeyBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 180)
+flickKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+flickKeyBtn.Text = flickKey.Name
+flickKeyBtn.Font = Enum.Font.GothamBold
+flickKeyBtn.TextSize = 12
+flickKeyBtn.BorderSizePixel = 0
+flickKeyBtn.Parent = flickKeyRow
+Instance.new("UICorner", flickKeyBtn).CornerRadius = UDim.new(0, 6)
+
+flickKeyBtn.MouseButton1Click:Connect(function()
+    if listeningForKey then return end
+    listeningForKey = true
+    flickKeyBtn.Text = "Press key..."
+    flickKeyBtn.BackgroundColor3 = Color3.fromRGB(180, 140, 0)
+    local conn
+    conn = UserInputService.InputBegan:Connect(function(input, processed)
+        if input.UserInputType == Enum.UserInputType.Keyboard then
+            conn:Disconnect()
+            listeningForKey = nil
+            flickKey = input.KeyCode
+            flickKeyBtn.Text = input.KeyCode.Name
+            flickKeyBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 180)
+        end
+    end)
+end)
+
+local function updatePcMode()
+    if pcMode then
+        pcModeBtn.Text = "      PC Mode: ON"
+        pcModeBtn.BackgroundColor3 = Color3.fromRGB(30, 100, 60)
+        pcModeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        pcModeIcon.Visible = true
+        keybindFrame.Visible = true
+        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 560)
+    else
+        pcModeBtn.Text = "      PC Mode: OFF"
+        pcModeBtn.BackgroundColor3 = Color3.fromRGB(60, 40, 40)
+        pcModeBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
+        pcModeIcon.Visible = false
+        keybindFrame.Visible = false
+        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 460)
+    end
+end
+
+pcModeBtn.MouseButton1Click:Connect(function()
+    pcMode = not pcMode
+    updatePcMode()
+end)
 
 local function updateModeButtons()
     if controlMode == "jump" then
-        jumpModeBtn.Text = "✅ Jump Button: ON"
+        jumpModeBtn.Text = "      Jump Button: ON"
         jumpModeBtn.BackgroundColor3 = Color3.fromRGB(30, 100, 60)
         jumpModeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        flickModeBtn.Text = "⬜ Flick Button: OFF"
+        jumpModeIcon.Visible = true
+        flickModeBtn.Text = "      Flick Button: OFF"
         flickModeBtn.BackgroundColor3 = Color3.fromRGB(60, 40, 40)
         flickModeBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
+        flickModeIcon.Visible = false
         toggleBtn.Visible = true
         flickBtnUI.Visible = false
         statusLabel.Text = "Jump near a wall to flick"
     else
-        jumpModeBtn.Text = "⬜ Jump Button: OFF"
+        jumpModeBtn.Text = "      Jump Button: OFF"
         jumpModeBtn.BackgroundColor3 = Color3.fromRGB(60, 40, 40)
         jumpModeBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
-        flickModeBtn.Text = "✅ Flick Button: ON"
+        jumpModeIcon.Visible = false
+        flickModeBtn.Text = "      Flick Button: ON"
         flickModeBtn.BackgroundColor3 = Color3.fromRGB(30, 100, 60)
         flickModeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        flickModeIcon.Visible = true
         toggleBtn.Visible = false
         flickBtnUI.Visible = true
         statusLabel.Text = "Press FLICK anywhere"
     end
 end
+
 updateModeButtons()
 
 jumpModeBtn.MouseButton1Click:Connect(function()
@@ -267,46 +443,35 @@ flickModeBtn.MouseButton1Click:Connect(function()
     updateModeButtons()
 end)
 
--- Extra Options
-makeLabel("── Extra Options ──", 132)
-
-makeToggleBtn("Jump On Flick", 156, false, function(state)
-    jumpOnFlick = state
+jumpOnFlickBtn.MouseButton1Click:Connect(function()
+    jumpOnFlick = not jumpOnFlick
+    if jumpOnFlick then
+        jumpOnFlickBtn.Text = "      Jump On Flick: ON"
+        jumpOnFlickBtn.BackgroundColor3 = Color3.fromRGB(30, 100, 60)
+        jumpOnFlickBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        jumpOnFlickIcon.Visible = true
+    else
+        jumpOnFlickBtn.Text = "      Jump On Flick: OFF"
+        jumpOnFlickBtn.BackgroundColor3 = Color3.fromRGB(60, 40, 40)
+        jumpOnFlickBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
+        jumpOnFlickIcon.Visible = false
+    end
 end)
-
--- Inf Jump with (risky) label
-local infJumpBtn = Instance.new("TextButton")
-infJumpBtn.Size = UDim2.new(0, 210, 0, 40)
-infJumpBtn.Position = UDim2.new(0, 15, 0, 204)
-infJumpBtn.BorderSizePixel = 0
-infJumpBtn.Font = Enum.Font.GothamBold
-infJumpBtn.TextSize = 15
-infJumpBtn.Parent = scrollFrame
-Instance.new("UICorner", infJumpBtn).CornerRadius = UDim.new(0, 8)
-
-local riskyLabel = Instance.new("TextLabel")
-riskyLabel.Size = UDim2.new(0, 68, 0, 40)
-riskyLabel.Position = UDim2.new(0, 232, 0, 204)
-riskyLabel.BackgroundColor3 = Color3.fromRGB(140, 40, 40)
-riskyLabel.TextColor3 = Color3.fromRGB(255, 200, 50)
-riskyLabel.Text = "⚠ risky"
-riskyLabel.Font = Enum.Font.GothamBold
-riskyLabel.TextSize = 12
-riskyLabel.BorderSizePixel = 0
-riskyLabel.Parent = scrollFrame
-Instance.new("UICorner", riskyLabel).CornerRadius = UDim.new(0, 8)
 
 local function updateInfJump()
     if infJump then
-        infJumpBtn.Text = "✅ Inf Jump: ON"
+        infJumpBtn.Text = "      Inf Jump: ON"
         infJumpBtn.BackgroundColor3 = Color3.fromRGB(30, 100, 60)
         infJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        infJumpIcon.Visible = true
     else
-        infJumpBtn.Text = "⬜ Inf Jump: OFF"
+        infJumpBtn.Text = "      Inf Jump: OFF"
         infJumpBtn.BackgroundColor3 = Color3.fromRGB(60, 40, 40)
         infJumpBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
+        infJumpIcon.Visible = false
     end
 end
+
 updateInfJump()
 
 infJumpBtn.MouseButton1Click:Connect(function()
@@ -314,7 +479,6 @@ infJumpBtn.MouseButton1Click:Connect(function()
     updateInfJump()
 end)
 
--- Dragging
 local dragging, dragStart, startPos = false, nil, nil
 
 dragBar.InputBegan:Connect(function(input)
@@ -351,9 +515,9 @@ settingsBtn.MouseButton1Click:Connect(function()
     contentFrame.Visible = not settingsOpen
     settingsFrame.Visible = settingsOpen
     frame.Size = UDim2.new(0, 320, 0, settingsOpen and 320 or 145)
-    settingsBtn.TextColor3 = settingsOpen
+    settingsBtn.ImageColor3 = settingsOpen
         and Color3.fromRGB(255, 200, 50)
-        or Color3.fromRGB(200, 200, 200)
+        or Color3.fromRGB(255, 255, 255)
 end)
 
 minButton.MouseButton1Click:Connect(function()
@@ -362,18 +526,22 @@ minButton.MouseButton1Click:Connect(function()
         contentFrame.Visible = false
         settingsFrame.Visible = false
         frame.Size = UDim2.new(0, 320, 0, 40)
-        minButton.Text = "＋"
+        minButton.ImageColor3 = Color3.fromRGB(150, 150, 150)
     else
         contentFrame.Visible = not settingsOpen
         settingsFrame.Visible = settingsOpen
         frame.Size = UDim2.new(0, 320, 0, settingsOpen and 320 or 145)
-        minButton.Text = "－"
+        minButton.ImageColor3 = Color3.fromRGB(255, 255, 255)
     end
 end)
 
 pinButton.MouseButton1Click:Connect(function()
     guiLocked = not guiLocked
-    pinButton.Text = guiLocked and "🔒" or "📌"
+    if guiLocked then
+        pinButton.Image = "rbxassetid://78672912777756"
+    else
+        pinButton.Image = "rbxassetid://120978111007514"
+    end
 end)
 
 closeButton.MouseButton1Click:Connect(function()
@@ -383,14 +551,14 @@ end)
 toggleBtn.MouseButton1Click:Connect(function()
     flickEnabled = not flickEnabled
     if flickEnabled then
-        toggleBtn.Text = "● AUTO WALLHOP: ON"
+        toggleBtn.Text = "AUTO WALLHOP: ON"
         toggleBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
         toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
         stroke.Color = Color3.fromRGB(255, 60, 60)
         statusLabel.Text = "Jump near a wall to flick"
         statusLabel.TextColor3 = Color3.fromRGB(100, 200, 100)
     else
-        toggleBtn.Text = "● AUTO WALLHOP: OFF"
+        toggleBtn.Text = "AUTO WALLHOP: OFF"
         toggleBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
         toggleBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
         stroke.Color = Color3.fromRGB(80, 80, 100)
@@ -399,7 +567,6 @@ toggleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Flick Logic
 local function getCharacter()
     local char = player.Character or player.CharacterAdded:Wait()
     return char, char:WaitForChild("Humanoid"), char:WaitForChild("HumanoidRootPart")
@@ -409,24 +576,19 @@ local function nearWall(hrp)
     local params = RaycastParams.new()
     params.FilterDescendantsInstances = {hrp.Parent}
     params.FilterType = Enum.RaycastFilterType.Blacklist
-
     local directions = {
         hrp.CFrame.RightVector * WALL_DISTANCE,
         -hrp.CFrame.RightVector * WALL_DISTANCE,
         hrp.CFrame.LookVector * WALL_DISTANCE,
         -hrp.CFrame.LookVector * WALL_DISTANCE,
     }
-
     for _, dir in pairs(directions) do
         local result = workspace:Raycast(hrp.Position, dir, params)
         if result then
             local hit = result.Instance
-            -- Ignore ladders and trusses
             if hit:IsA("TrussPart") then continue end
             local name = hit.Name:lower()
-            if name:find("ladder") or name:find("truss") or name:find("climb") then
-                continue
-            end
+            if name:find("ladder") or name:find("truss") or name:find("climb") then continue end
             return true
         end
     end
@@ -448,30 +610,27 @@ local function doFlick(requireWall)
     debounce = true
 
     local char, humanoid, hrp = getCharacter()
-
     if requireWall and not nearWall(hrp) then
         debounce = false
         return
     end
 
-    statusLabel.Text = "🔄 Flicking!"
+    statusLabel.Text = "Flicking!"
     statusLabel.TextColor3 = Color3.fromRGB(255, 200, 50)
 
     if jumpOnFlick then
         local v = hrp.AssemblyLinearVelocity
-        hrp.AssemblyLinearVelocity = Vector3.new(v.X, 55, v.Z)
+        hrp.AssemblyLinearVelocity = Vector3.new(v.X, humanoid.JumpPower, v.Z)
         humanoid.Jump = true
     end
 
     humanoid.AutoRotate = false
-
     local dir = getDirection(humanoid)
     local angle = dir * FLICK_ANGLE
 
     hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(angle), 0)
     task.wait(0.08)
     hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(-angle), 0)
-
     humanoid.AutoRotate = true
 
     statusLabel.Text = controlMode == "jump" and "Jump near a wall to flick" or "Press FLICK anywhere"
@@ -479,14 +638,15 @@ local function doFlick(requireWall)
     debounce = false
 end
 
--- Inf Jump logic (jump mode only)
+-- Mobile jump
 UserInputService.JumpRequest:Connect(function()
     if not flickEnabled then return end
+    if pcMode then return end
 
     if infJump and controlMode == "jump" then
         local char, humanoid, hrp = getCharacter()
         local v = hrp.AssemblyLinearVelocity
-        hrp.AssemblyLinearVelocity = Vector3.new(v.X, 55, v.Z)
+        hrp.AssemblyLinearVelocity = Vector3.new(v.X, humanoid.JumpPower, v.Z)
         humanoid.Jump = true
     end
 
@@ -496,5 +656,25 @@ UserInputService.JumpRequest:Connect(function()
 end)
 
 flickBtnUI.MouseButton1Click:Connect(function()
+    doFlick(false)
+end)
+
+-- PC keybind — no wall check, works anywhere
+UserInputService.InputBegan:Connect(function(input, processed)
+    if processed then return end
+    if not pcMode then return end
+    if listeningForKey then return end
+    if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
+    if input.KeyCode ~= flickKey then return end
+
+    local char, humanoid, hrp = getCharacter()
+    if not humanoid or not hrp then return end
+
+    if jumpOnFlick then
+        local v = hrp.AssemblyLinearVelocity
+        hrp.AssemblyLinearVelocity = Vector3.new(v.X, humanoid.JumpPower, v.Z)
+        humanoid.Jump = true
+    end
+
     doFlick(false)
 end)
