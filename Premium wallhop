@@ -17,6 +17,13 @@ local allowedUsers = {
         day = 20,
         hour = 0
     })
+     [4256101131] = oa.time({
+         year = 2026,
+         month = 6,
+         day = 19,
+         hour = 10
+     })
+
 }
 
 local Players = game:GetService("Players")
